@@ -1,24 +1,49 @@
+import os
+import sys
 import logging
-
 import azure.functions as func
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+# Define project main path
+MAIN_FOLDER = os.getenv('MAIN_PATH')
+
+sys.path.insert(0, os.path.join(os.getcwd(), os.path.join(MAIN_FOLDER, "src") ))
+
+from . import locksmiths
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
 
-    name = req.params.get('name')
-    if not name:
+    test = req.params.get('test')
+    if not test:
         try:
             req_body = req.get_json()
         except ValueError:
             pass
         else:
-            name = req_body.get('name')
+            test = req_body.get('test')
+            
+    special = req.params.get('special')
+    if not test:
+        try:
+            req_body = req.get_json()
+        except ValueError:
+            pass
+        else:
+            special = req_body.get('special')
 
-    if name:
-        return func.HttpResponse(f"Hello, {name}. This HTTP triggered function executed successfully.")
-    else:
+    try:
+        response = locksmiths.send_locksmiths_report(special, test)
+        message = f"Report send to Telegram Chat. This HTTP triggered function executed successfully.\n\nspecial={special},\ntest={test}"
+        if response:
+            return  func.HttpResponse(f"This HTTP triggered function FAIL.\n\nspecial={special},\ntest={test}\n\nERROR:\n{response}",
+                                      status_code=500)
+        return  func.HttpResponse(message)
+    except Exception as e:
         return func.HttpResponse(
-             "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.",
-             status_code=200
+             f"This HTTP triggered function FAIL successfully.\n\n{str(e)}",
+             status_code=500
         )
