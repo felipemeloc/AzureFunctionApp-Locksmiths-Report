@@ -91,8 +91,11 @@ def main(GROUP_ID):
     logging.info(message)
     bot.send_message(GROUP_ID, message)
     
-    if blob.exists(REPORT_IMAGE):
-        bot.send_photo(GROUP_ID, REPORT_IMAGE, 'Completed jobs summary')
+    if blob.blob_exists(REPORT_IMAGE):
+        photo_bytes = blob.download(REPORT_IMAGE, as_bytes=True)
+        bot.send_photo(GROUP_ID, photo_bytes, 'Completed jobs summary')
+    else:
+        logging.info(f'{REPORT_IMAGE}: not found')
         
 def send_locksmiths_report(special=False, test=False):
     if test:
@@ -112,9 +115,9 @@ def send_locksmiths_report(special=False, test=False):
             logging.info('Process Successful')
         else:
             logging.info('Execution after hours')
-        # if blob.exists(REPORT_IMAGE):
-        #     blob.delete_blob(REPORT_IMAGE)
-        #     logging.info('Locksmiths report image deleted')
+        if blob.blob_exists(REPORT_IMAGE):
+            blob.delete_blob(REPORT_IMAGE)
+            logging.info('Locksmiths report image deleted')
     except Exception as e:
         logging.exception(e)
 

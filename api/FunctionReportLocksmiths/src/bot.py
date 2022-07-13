@@ -26,7 +26,6 @@ The function send_photo read an image from a path and send it to the chat id wit
 from sqlalchemy import true
 import telebot
 import os
-from .src import azure_blob as blob
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -52,7 +51,7 @@ def send_message(id:str, message:str)->None:
                     text=message,
                     parse_mode='Markdown')
 
-def send_photo(id:str, photo_path:str, description:str=None)->None:
+def send_photo(id:str, photo_bytes, description:str=None)->None:
   """Function to send images to an specifict chat id
 
   Args:
@@ -63,9 +62,8 @@ def send_photo(id:str, photo_path:str, description:str=None)->None:
 
   # Read image as a bit map
   # photo = open(photo_path, 'rb').read()
-  photo = blob.download(photo_path, as_bytes= True)
   # Send image to chat id
   bot = init_bot()
   bot.send_photo(chat_id= id,
-                  photo= photo,
+                  photo= photo_bytes,
                   caption= description)
