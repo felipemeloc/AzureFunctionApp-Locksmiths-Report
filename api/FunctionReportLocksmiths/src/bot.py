@@ -26,10 +26,10 @@ The function send_photo read an image from a path and send it to the chat id wit
 from sqlalchemy import true
 import telebot
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
 # Load environment variables
-load_dotenv()
+# load_dotenv()
 # Define project main path
 main_path = os.getenv('MAIN_PATH')
 

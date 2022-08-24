@@ -19,10 +19,10 @@ Contains the following function:
 """
 
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 from azure.storage.blob import BlobServiceClient, _container_client
 
-load_dotenv()
+# load_dotenv()
 
 def init_blob()->_container_client.ContainerClient:
     """Connection blob function, it is used to download azure files to
